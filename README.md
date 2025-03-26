@@ -83,7 +83,7 @@ plt.show()
 | `investor_grades` | Long-term investment ratings | `client.investor_grades.get(symbol="BTC,ETH", startDate="2023-10-01", endDate="2023-10-10")` |
 | `trader_grades` | Short-term trading signals | `client.trader_grades.get(symbol="BTC,ETH", startDate="2023-10-01", endDate="2023-10-10")` |
 | `trader_indices` | AI-generated trading portfolios | `client.trader_indices.get(startDate="2023-10-01", endDate="2023-10-10")` |
-| `market_metrics` | Overall market sentiment data | `client.market_metrics.get(startDate="2023-10-01", endDate="2023-10-10")` |
+| `market_metrics` | Overall market data | `client.market_metrics.get(startDate="2023-10-01", endDate="2023-10-10")` |
 | `ai_agent` | Interact with Token Metrics AI chatbot | `client.ai_agent.ask("What is your Bitcoin forecast?")` |
 | `ai_reports` | AI-generated analysis reports | `client.ai_reports.get(symbol="BTC,ETH")` |
 | `trading_signals` | AI-generated trading signals | `client.trading_signals.get(symbol="BTC,ETH", startDate="2023-10-01", endDate="2023-10-10", signal="1")` |
