@@ -1,0 +1,7 @@
+# Add to .gitignore
+dist/
+*.egg-info/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
