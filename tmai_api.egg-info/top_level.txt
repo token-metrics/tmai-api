@@ -1,3 +1,0 @@
-examples
-tests
-tmai_api
