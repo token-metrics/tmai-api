@@ -182,7 +182,7 @@ This SDK is distributed under the MIT License. See the [LICENSE](LICENSE) file f
 
 <p align="center">
   <a href="https://tokenmetrics.com">
-    <img src="https://tokenmetrics.com/wp-content/uploads/2021/06/TOKEN_METRICS_LONG_DARK-1-300x56.png" alt="Token Metrics Logo" width="300">
+    <img src="https://files.readme.io/6141d8ec9ddb9dd233e52357e7526ba5fea3dacafab20cd042bc20a2de070beb-dark_mode_1.svg" alt="Token Metrics Logo" width="300">
   </a>
 </p>
 <p align="center">
