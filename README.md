@@ -168,7 +168,7 @@ except Exception as e:
 
 For complete API documentation, visit:
 - [Token Metrics API Documentation](https://api.tokenmetrics.com/docs)
-- [SDK Examples](https://github.com/token-metrics/tmai-api/examples/example_usage.ipynb)
+- [SDK Examples](https://github.com/token-metrics/tmai-api/blob/master/examples/example_usage.ipynb)
 
 ## Contributing
 
