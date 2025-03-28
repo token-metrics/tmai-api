@@ -5,8 +5,8 @@ class TradingSignalsEndpoint(BaseEndpoint):
     
     def get(self, token_id=None, symbol=None, startDate=None, endDate=None, 
             category=None, exchange=None, marketcap=None, volume=None, 
-            fdv=None, signal=None, limit=1000, page=0):
-        """Get AI-generated trading signals for long and short positions for tokens.
+            fdv=None, signal=None):
+        """Get AI-generated trading signals with automatic date chunking and pagination.
         
         Args:
             token_id (str, optional): Comma-separated Token IDs
@@ -19,11 +19,15 @@ class TradingSignalsEndpoint(BaseEndpoint):
             volume (str, optional): Minimum 24h trading volume in $
             fdv (str, optional): Minimum fully diluted valuation in $
             signal (str, optional): Signal value: bullish (1), bearish (-1) or no signal (0)
-            limit (int, optional): Limit the number of items in response
-            page (int, optional): Page number for pagination
             
         Returns:
-            dict: Trading signals data
+            dict: Trading signals data with all pages and date ranges combined
+            
+        Note:
+            This method handles the API's 29-day limit limitation by:
+            1. Automatically chunking the date range into 29-day periods
+            2. Displaying a progress bar during fetching
+            3. Combining all results into a single response
         """
         params = {
             'token_id': token_id,
@@ -35,15 +39,13 @@ class TradingSignalsEndpoint(BaseEndpoint):
             'marketcap': marketcap,
             'volume': volume,
             'fdv': fdv,
-            'signal': signal,
-            'limit': limit,
-            'page': page
+            'signal': signal
         }
         
         # Remove None values
         params = {k: v for k, v in params.items() if v is not None}
         
-        return self._request('get', 'trading-signals', params)
+        return self._paginated_request('get', 'trading-signals', params, max_days=29)
     
     def get_dataframe(self, **kwargs):
         """Get trading signals data as a pandas DataFrame.

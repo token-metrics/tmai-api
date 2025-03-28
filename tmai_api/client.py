@@ -1,5 +1,6 @@
 from tmai_api.endpoints.tokens import TokensEndpoint
 from tmai_api.endpoints.hourly_ohlcv import HourlyOHLCVEndpoint
+from tmai_api.endpoints.daily_ohlcv import DailyOHLCVEndpoint
 from tmai_api.endpoints.investor_grades import InvestorGradesEndpoint
 from tmai_api.endpoints.trader_grades import TraderGradesEndpoint
 from tmai_api.endpoints.trader_indices import TraderIndicesEndpoint
@@ -22,6 +23,7 @@ class TokenMetricsClient:
         self.api_key = api_key
         self.tokens = TokensEndpoint(self)
         self.hourly_ohlcv = HourlyOHLCVEndpoint(self)
+        self.daily_ohlcv = DailyOHLCVEndpoint(self)
         self.investor_grades = InvestorGradesEndpoint(self)
         self.trader_grades = TraderGradesEndpoint(self)
         self.trader_indices = TraderIndicesEndpoint(self)

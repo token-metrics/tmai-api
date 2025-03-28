@@ -5,9 +5,8 @@ class TraderGradesEndpoint(BaseEndpoint):
     
     def get(self, token_id=None, startDate=None, endDate=None, symbol=None,
             category=None, exchange=None, marketcap=None, fdv=None, 
-            volume=None, traderGrade=None, traderGradePercentChange=None,
-            limit=1000, page=0):
-        """Get the short-term trading grades, including the 24h percent change for the TM Trader Grade.
+            volume=None, traderGrade=None, traderGradePercentChange=None):
+        """Get the short-term trading grades with automatic date chunking and pagination.
         
         Args:
             token_id (str, optional): Comma-separated Token IDs
@@ -21,11 +20,15 @@ class TraderGradesEndpoint(BaseEndpoint):
             volume (str, optional): Minimum 24h trading volume in $
             traderGrade (str, optional): Minimum TM Trader Grade
             traderGradePercentChange (str, optional): Minimum 24h percent change in TM Trader Grade
-            limit (int, optional): Limit the number of items in response
-            page (int, optional): Page number for pagination
             
         Returns:
-            dict: Trader grades data
+            dict: Trader grades data with all pages and date ranges combined
+            
+        Note:
+            This method handles the API's 29-day limit limitation by:
+            1. Automatically chunking the date range into 29-day periods
+            2. Displaying a progress bar during fetching
+            3. Combining all results into a single response
         """
         params = {
             'token_id': token_id,
@@ -38,15 +41,13 @@ class TraderGradesEndpoint(BaseEndpoint):
             'fdv': fdv,
             'volume': volume,
             'traderGrade': traderGrade,
-            'traderGradePercentChange': traderGradePercentChange,
-            'limit': limit,
-            'page': page
+            'traderGradePercentChange': traderGradePercentChange
         }
         
         # Remove None values
         params = {k: v for k, v in params.items() if v is not None}
         
-        return self._request('get', 'trader-grades', params)
+        return self._paginated_request('get', 'trader-grades', params, max_days=29)
     
     def get_dataframe(self, **kwargs):
         """Get trader grades data as a pandas DataFrame.

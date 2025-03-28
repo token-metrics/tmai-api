@@ -5,8 +5,8 @@ class InvestorGradesEndpoint(BaseEndpoint):
     
     def get(self, token_id=None, startDate=None, endDate=None, symbol=None,
             category=None, exchange=None, marketcap=None, fdv=None, 
-            volume=None, investorGrade=None, limit=1000, page=0):
-        """Get the long-term investment grades, including Technology and Fundamental metrics.
+            volume=None, investorGrade=None):
+        """Get the long-term investment grades with automatic date chunking and pagination.
         
         Args:
             token_id (str, optional): Comma-separated Token IDs
@@ -19,11 +19,15 @@ class InvestorGradesEndpoint(BaseEndpoint):
             fdv (str, optional): Minimum fully diluted valuation in $
             volume (str, optional): Minimum 24h trading volume in $
             investorGrade (str, optional): Minimum TM Investor Grade
-            limit (int, optional): Limit the number of items in response
-            page (int, optional): Page number for pagination
             
         Returns:
-            dict: Investor grades data
+            dict: Investor grades data with all pages and date ranges combined
+            
+        Note:
+            This method handles the API's 29-day limit limitation by:
+            1. Automatically chunking the date range into 29-day periods
+            2. Displaying a progress bar during fetching
+            3. Combining all results into a single response
         """
         params = {
             'token_id': token_id,
@@ -35,15 +39,13 @@ class InvestorGradesEndpoint(BaseEndpoint):
             'marketcap': marketcap,
             'fdv': fdv,
             'volume': volume,
-            'investorGrade': investorGrade,
-            'limit': limit,
-            'page': page
+            'investorGrade': investorGrade
         }
         
         # Remove None values
         params = {k: v for k, v in params.items() if v is not None}
         
-        return self._request('get', 'investor-grades', params)
+        return self._paginated_request('get', 'investor-grades', params, max_days=29)
     
     def get_dataframe(self, **kwargs):
         """Get investor grades data as a pandas DataFrame.

@@ -1,11 +1,11 @@
 from tmai_api.base import BaseEndpoint
 
-class HourlyOHLCVEndpoint(BaseEndpoint):
-    """Endpoint for accessing hourly OHLCV (Open, High, Low, Close, Volume) data"""
+class DailyOHLCVEndpoint(BaseEndpoint):
+    """Endpoint for accessing daily OHLCV (Open, High, Low, Close, Volume) data"""
     
     def get(self, token_id=None, symbol=None, token_name=None, 
             startDate=None, endDate=None):
-        """Get hourly OHLCV data for tokens with automatic date chunking and pagination.
+        """Get daily OHLCV data for tokens with automatic date chunking and pagination.
         
         Args:
             token_id (str, optional): Comma-separated Token IDs
@@ -15,7 +15,7 @@ class HourlyOHLCVEndpoint(BaseEndpoint):
             endDate (str, optional): End date in YYYY-MM-DD format
             
         Returns:
-            dict: Hourly OHLCV data with all pages and date ranges combined
+            dict: Daily OHLCV data with all pages and date ranges combined
             
         Note:
             This method handles the API's 29-day limit limitation by:
@@ -35,16 +35,16 @@ class HourlyOHLCVEndpoint(BaseEndpoint):
         params = {k: v for k, v in params.items() if v is not None}
         
         # Use custom pagination logic with a 29-day maximum range
-        return self._paginated_request('get', 'hourly-ohlcv', params, max_days=29)
+        return self._paginated_request('get', 'daily-ohlcv', params, max_days=29)
     
     def get_dataframe(self, **kwargs):
-        """Get hourly OHLCV data as a pandas DataFrame.
+        """Get daily OHLCV data as a pandas DataFrame.
         
         Args:
             **kwargs: Arguments to pass to the get method
             
         Returns:
-            pandas.DataFrame: DataFrame containing hourly OHLCV data
+            pandas.DataFrame: DataFrame containing daily OHLCV data
         """
         data = self.get(**kwargs)
         return self.to_dataframe(data)
