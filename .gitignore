@@ -1,0 +1,5 @@
+/.env
+/portfolios.json
+/subscribers.json
+venv/
+__pycache__/
