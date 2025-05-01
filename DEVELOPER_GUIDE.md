@@ -19,7 +19,7 @@ The Token Metrics AI API provides professional investors and traders with compre
 
 ## API Key
 
-To use the Token Metrics AI API, you need an API key. You can get your API key by signing up at [Token Metrics Developers](https://developers.tokenmetrics.com/).
+To use the Token Metrics AI API, you need an API key. You can get your API key by signing up at [Token Metrics API](https://app.tokenmetrics.com/en/api).
 
 ## SDK Installation
 
