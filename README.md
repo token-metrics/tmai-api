@@ -51,7 +51,7 @@ client.tokens.get({ symbol: 'BTC,ETH' })
 
 ## Documentation
 
-- [Token Metrics API Documentation](https://api.tokenmetrics.com/docs)
+- [Token Metrics API Documentation](https://developers.tokenmetrics.com/)
 - [Developer Guide](DEVELOPER_GUIDE.md) - Comprehensive guide for developers
 - [Python SDK Documentation](python/README.md)
 - [JavaScript SDK Documentation](js/README.md)
