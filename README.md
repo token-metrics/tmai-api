@@ -2,6 +2,17 @@
 
 The official SDK for Token Metrics AI API - providing professional investors and traders with comprehensive cryptocurrency analysis, AI-powered trading signals, market data, and advanced insights.
 
+Build AI-driven trading agents for real crypto alpha. Empowering you to build AI-driven trading agents that capture market-leading alpha trading.
+
+[![ETH Bucharest: Build AI Crypto Trading Bots & Agents](https://img.youtube.com/vi/1qVuIwmeZJE/0.jpg)](https://www.youtube.com/watch?v=1qVuIwmeZJE)
+*Watch our team's presentation at ETH Bucharest: Build AI Crypto Trading Bots & Agents in 2 Lines*
+
+## Core Value Proposition
+
+- **AI-Driven Precision for Crypto**: Utilize advanced machine learning models trained on crypto market dynamics to generate actionable trading signals
+- **Crypto Trading Agents**: Build agents that can take consistently winning trades on exchanges—both centralized and decentralized
+- **Real Crypto Alpha Generation**: Rely on backtested AI grades to drive decisions that yield tangible profitability in the crypto space
+
 ## Features
 
 - **Comprehensive Market Data**: Access detailed information on thousands of cryptocurrencies
@@ -55,6 +66,25 @@ client.tokens.get({ symbol: 'BTC,ETH' })
 - [Developer Guide](DEVELOPER_GUIDE.md) - Comprehensive guide for developers
 - [Python SDK Documentation](python/README.md)
 - [JavaScript SDK Documentation](js/README.md)
+
+## Target Audiences
+
+### Developers
+Create market-leading trading tools, DeFAI apps, and agentic dashboards.
+
+### Traders & Hedge Funds
+Deploy autonomous agents that maximize returns with real-time crypto data.
+
+### Institutions
+Command unbelievable scale when you infuse AI Agents into your profit strategies.
+
+## Use Cases
+
+- **CEX Trading Agents**: Automate profitable trades on centralized exchanges
+- **DEX Trading Agents**: Execute on-chain trades on decentralized exchanges
+- **Market Prediction Dashboards**: Build real-time dashboards with market insights
+- **Telegram/Discord Agents**: Create interactive agents for trading alerts
+- **Web/Mobile/Desktop Applications**: Develop user-friendly applications for crypto trading
 
 ## Sample Applications
 

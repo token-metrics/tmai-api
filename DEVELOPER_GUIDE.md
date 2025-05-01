@@ -17,6 +17,25 @@ This guide provides comprehensive information for developers looking to integrat
 
 The Token Metrics AI API provides professional investors and traders with comprehensive cryptocurrency analysis, AI-powered trading signals, market data, and advanced insights. This guide will help you integrate the API into your applications.
 
+### What You Can Build
+
+- **CEX Trading Agents**: Automate profitable trades on centralized exchanges
+- **DEX Trading Agents**: Execute on-chain trades on decentralized exchanges
+- **Market Prediction Dashboards**: Build real-time dashboards with market insights
+- **Telegram/Discord Agents**: Create interactive agents for trading alerts
+- **Web/Mobile/Desktop Applications**: Develop user-friendly applications for crypto trading
+
+### Who Can Benefit
+
+- **Developers**: Create market-leading trading tools, DeFAI apps, and agentic dashboards
+- **Traders & Hedge Funds**: Deploy autonomous agents that maximize returns with real-time crypto data
+- **Institutions**: Command unbelievable scale when you infuse AI Agents into your profit strategies
+
+### Watch Our ETH Bucharest Presentation
+
+Learn how to build AI crypto trading bots and agents in just 2 lines of code:
+[ETH Bucharest: Build AI Crypto Trading Bots & Agents](https://www.youtube.com/watch?v=1qVuIwmeZJE)
+
 ## API Key
 
 To use the Token Metrics AI API, you need an API key. You can get your API key by signing up at [Token Metrics API](https://app.tokenmetrics.com/en/api).
