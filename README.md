@@ -4,9 +4,7 @@ The official SDK for Token Metrics AI API - providing professional investors and
 
 Build AI-driven trading agents for real crypto alpha. Empowering you to build AI-driven trading agents that capture market-leading alpha trading.
 
-[![ETH Bucharest: Build AI Crypto Trading Bots & Agents](https://img.youtube.com/vi/1qVuIwmeZJE/0.jpg)](https://www.youtube.com/watch?v=1qVuIwmeZJE)
-
-*Watch our team's presentation at ETH Bucharest: Build AI Crypto Trading Bots & Agents in 2 Lines*
+[Watch our team's presentation at ETH Bucharest: Build AI Crypto Trading Bots & Agents in 2 Lines](https://www.youtube.com/watch?v=1qVuIwmeZJE)
 
 ## Core Value Proposition
 
