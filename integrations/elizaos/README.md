@@ -1,6 +1,6 @@
 # Token Metrics ElizaOS Plugin
 
-This plugin integrates the Token Metrics AI API with ElizaOS, providing cryptocurrency ratings, factors, and sentiment analysis.
+This plugin integrates the Token Metrics AI API with ElizaOS, providing cryptocurrency ratings, metrics, and sentiment analysis.
 
 ## Features
 

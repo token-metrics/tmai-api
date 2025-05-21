@@ -1,7 +1,7 @@
 # ElizaOS Plugin for Token Metrics API
 name: token-metrics-ratings
 version: 1.0.0
-description: Access Token Metrics AI API for cryptocurrency ratings, factors, and sentiment analysis
+description: Access Token Metrics AI API for cryptocurrency ratings, metrics, and sentiment analysis
 author: Token Metrics
 license: MIT
 
