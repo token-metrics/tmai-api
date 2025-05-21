@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: Token Metrics AI API
   description: |
-    Token Metrics AI API provides cryptocurrency ratings, factors, and sentiment analysis for professional traders and investors.
+    Token Metrics AI API provides cryptocurrency ratings, metrics, and sentiment analysis for professional traders and investors.
     
     The API offers comprehensive cryptocurrency analysis, market data, and AI-powered trading signals.
   version: 1.0.0
@@ -67,11 +67,11 @@ paths:
           description: Unauthorized
         '400':
           description: Bad request
-  /factors:
+  /metrics:
     get:
-      summary: Get cryptocurrency factors
-      description: Retrieve factors that influence cryptocurrency ratings
-      operationId: getFactors
+      summary: Get cryptocurrency metrics
+      description: Retrieve metrics that influence cryptocurrency ratings
+      operationId: getMetrics
       parameters:
         - name: symbol
           in: query
@@ -113,7 +113,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FactorsResponse'
+                $ref: '#/components/schemas/MetricsResponse'
         '401':
           description: Unauthorized
         '400':
@@ -221,16 +221,16 @@ components:
           format: float
           description: Fundamental analysis score
           example: 88.1
-    FactorsResponse:
+    MetricsResponse:
       type: object
       properties:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/Factor'
+            $ref: '#/components/schemas/Metric'
         meta:
           $ref: '#/components/schemas/Meta'
-    Factor:
+    Metric:
       type: object
       properties:
         symbol:
@@ -240,18 +240,18 @@ components:
         date:
           type: string
           format: date
-          description: Factor date
+          description: Metric date
           example: "2023-10-01"
-        factor_name:
+        metric_name:
           type: string
           description: Name of the factor
           example: "Market Momentum"
-        factor_value:
+        metric_value:
           type: number
           format: float
           description: Value of the factor
           example: 0.75
-        factor_weight:
+        metric_weight:
           type: number
           format: float
           description: Weight of the factor in overall rating

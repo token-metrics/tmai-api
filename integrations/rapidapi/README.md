@@ -21,7 +21,7 @@ This integration provides the Token Metrics AI API on the RapidAPI Hub marketpla
 The integration exposes the following endpoints:
 
 - **GET /ratings** - Retrieve AI-powered ratings for cryptocurrencies
-- **GET /factors** - Get factors that influence cryptocurrency ratings
+- **GET /metrics** - Get metrics that influence cryptocurrency ratings
 - **GET /sentiments** - Access sentiment analysis for cryptocurrencies
 
 ## Authentication
