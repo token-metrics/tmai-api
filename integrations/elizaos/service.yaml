@@ -1,0 +1,63 @@
+# ElizaOS Plugin for Token Metrics API
+name: token-metrics-ratings
+version: 1.0.0
+description: Access Token Metrics AI API for cryptocurrency ratings, factors, and sentiment analysis
+author: Token Metrics
+license: MIT
+
+# API Configuration
+api:
+  base_url: https://api.tokenmetrics.com/v2
+  endpoints:
+    - path: /ratings
+      method: GET
+      description: Get cryptocurrency ratings
+      parameters:
+        - name: symbol
+          type: string
+          required: true
+          description: Token symbol (e.g., "BTC")
+        - name: startDate
+          type: string
+          required: false
+          description: Start date in YYYY-MM-DD format
+        - name: endDate
+          type: string
+          required: false
+          description: End date in YYYY-MM-DD format
+      response:
+        content_type: application/json
+        schema:
+          type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+    - path: /auth
+      method: POST
+      description: Authenticate with the Token Metrics API
+      parameters:
+        - name: api_key
+          type: string
+          required: true
+          description: Your Token Metrics API key
+      response:
+        content_type: application/json
+        schema:
+          type: object
+          properties:
+            token:
+              type: string
+              description: JWT token with claims (plan, payment_method, stake_score)
+
+# ElizaOS Integration
+elizaos:
+  permissions:
+    - network
+  sandbox:
+    timeout_ms: 800
+    memory_limit_mb: 128
+  display:
+    icon: https://tokenmetrics.com/icon.png
+    color: "#3498db"
