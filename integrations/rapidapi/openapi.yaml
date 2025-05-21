@@ -1,0 +1,311 @@
+openapi: 3.1.0
+info:
+  title: Token Metrics AI API
+  description: |
+    Token Metrics AI API provides cryptocurrency ratings, factors, and sentiment analysis for professional traders and investors.
+    
+    The API offers comprehensive cryptocurrency analysis, market data, and AI-powered trading signals.
+  version: 1.0.0
+  contact:
+    name: Token Metrics Support
+    url: https://tokenmetrics.com/support
+    email: support@tokenmetrics.com
+servers:
+  - url: https://api.tokenmetrics.com/v2
+    description: Production server
+security:
+  - BearerAuth: []
+paths:
+  /ratings:
+    get:
+      summary: Get cryptocurrency ratings
+      description: Retrieve AI-powered ratings for cryptocurrencies
+      operationId: getRatings
+      parameters:
+        - name: symbol
+          in: query
+          description: Token symbol (e.g., "BTC")
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Start date in YYYY-MM-DD format
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: End date in YYYY-MM-DD format
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          description: Limit the number of items in response
+          required: false
+          schema:
+            type: integer
+            default: 1000
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingsResponse'
+        '401':
+          description: Unauthorized
+        '400':
+          description: Bad request
+  /factors:
+    get:
+      summary: Get cryptocurrency factors
+      description: Retrieve factors that influence cryptocurrency ratings
+      operationId: getFactors
+      parameters:
+        - name: symbol
+          in: query
+          description: Token symbol (e.g., "BTC")
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Start date in YYYY-MM-DD format
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: End date in YYYY-MM-DD format
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          description: Limit the number of items in response
+          required: false
+          schema:
+            type: integer
+            default: 1000
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FactorsResponse'
+        '401':
+          description: Unauthorized
+        '400':
+          description: Bad request
+  /sentiments:
+    get:
+      summary: Get cryptocurrency sentiment
+      description: Retrieve sentiment analysis for cryptocurrencies
+      operationId: getSentiments
+      parameters:
+        - name: symbol
+          in: query
+          description: Token symbol (e.g., "BTC")
+          required: true
+          schema:
+            type: string
+        - name: startDate
+          in: query
+          description: Start date in YYYY-MM-DD format
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          description: End date in YYYY-MM-DD format
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: limit
+          in: query
+          description: Limit the number of items in response
+          required: false
+          schema:
+            type: integer
+            default: 1000
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SentimentsResponse'
+        '401':
+          description: Unauthorized
+        '400':
+          description: Bad request
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT token with required claims:
+        - plan: User subscription plan
+        - payment_method: Payment method used
+        - stake_score: Staking score for discounts
+  schemas:
+    RatingsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rating'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Rating:
+      type: object
+      properties:
+        symbol:
+          type: string
+          description: Token symbol
+          example: "BTC"
+        date:
+          type: string
+          format: date
+          description: Rating date
+          example: "2023-10-01"
+        rating:
+          type: number
+          format: float
+          description: Overall rating score (0-100)
+          example: 85.7
+        grade:
+          type: string
+          description: Letter grade based on rating
+          example: "A"
+        technical_score:
+          type: number
+          format: float
+          description: Technical analysis score
+          example: 82.3
+        fundamental_score:
+          type: number
+          format: float
+          description: Fundamental analysis score
+          example: 88.1
+    FactorsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Factor'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Factor:
+      type: object
+      properties:
+        symbol:
+          type: string
+          description: Token symbol
+          example: "BTC"
+        date:
+          type: string
+          format: date
+          description: Factor date
+          example: "2023-10-01"
+        factor_name:
+          type: string
+          description: Name of the factor
+          example: "Market Momentum"
+        factor_value:
+          type: number
+          format: float
+          description: Value of the factor
+          example: 0.75
+        factor_weight:
+          type: number
+          format: float
+          description: Weight of the factor in overall rating
+          example: 0.2
+    SentimentsResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Sentiment'
+        meta:
+          $ref: '#/components/schemas/Meta'
+    Sentiment:
+      type: object
+      properties:
+        symbol:
+          type: string
+          description: Token symbol
+          example: "BTC"
+        date:
+          type: string
+          format: date
+          description: Sentiment date
+          example: "2023-10-01"
+        sentiment_score:
+          type: number
+          format: float
+          description: Overall sentiment score (-1 to 1)
+          example: 0.65
+        source:
+          type: string
+          description: Source of sentiment data
+          example: "social_media"
+        volume:
+          type: integer
+          description: Volume of sentiment data points
+          example: 1250
+    Meta:
+      type: object
+      properties:
+        total:
+          type: integer
+          description: Total number of items
+          example: 100
+        limit:
+          type: integer
+          description: Limit per page
+          example: 10
+        page:
+          type: integer
+          description: Current page
+          example: 0
+        pages:
+          type: integer
+          description: Total number of pages
+          example: 10
