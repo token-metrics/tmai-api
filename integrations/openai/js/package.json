@@ -1,0 +1,25 @@
+{
+  "name": "@tmai/openai",
+  "version": "1.0.0",
+  "description": "Token Metrics AI helper library for OpenAI Agents",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "token-metrics",
+    "cryptocurrency",
+    "openai",
+    "agents",
+    "ai"
+  ],
+  "author": "Token Metrics",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "jsonwebtoken": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
