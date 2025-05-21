@@ -1,6 +1,6 @@
 {
   "name": "Token Metrics AI API",
-  "description": "Access Token Metrics AI API for cryptocurrency ratings, factors, and sentiment analysis",
+  "description": "Access Token Metrics AI API for cryptocurrency ratings, metrics, and sentiment analysis",
   "icon": "https://tokenmetrics.com/icon.png",
   "plans": [
     {
@@ -32,7 +32,7 @@
         "interval": "month"
       },
       "features": [
-        "Access to ratings and factors endpoints",
+        "Access to ratings and metrics endpoints",
         "Limited to 5,000 API calls per month",
         "10% discount when paying with TMAI token"
       ],
@@ -51,7 +51,7 @@
         "interval": "month"
       },
       "features": [
-        "Access to all endpoints (ratings, factors, sentiment)",
+        "Access to all endpoints (ratings, metrics, sentiment)",
         "Limited to 20,000 API calls per month",
         "10% discount when paying with TMAI token"
       ],
@@ -70,7 +70,7 @@
         "interval": "month"
       },
       "features": [
-        "Access to all endpoints (ratings, factors, sentiment)",
+        "Access to all endpoints (ratings, metrics, sentiment)",
         "Limited to 100,000 API calls per month",
         "10% discount when paying with TMAI token",
         "Priority support"

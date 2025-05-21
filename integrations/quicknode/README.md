@@ -1,6 +1,6 @@
 # Token Metrics QuickNode Add-On
 
-This integration provides a QuickNode Add-On for the Token Metrics AI API, allowing QuickNode users to access cryptocurrency ratings, factors, and sentiment analysis.
+This integration provides a QuickNode Add-On for the Token Metrics AI API, allowing QuickNode users to access cryptocurrency ratings, metrics, and sentiment analysis.
 
 ## Features
 
@@ -15,7 +15,7 @@ This integration provides a QuickNode Add-On for the Token Metrics AI API, allow
 
 The Express server provides endpoints for:
 - `/ratings` - Get cryptocurrency ratings
-- `/factors` - Get cryptocurrency factors
+- `/metrics` - Get cryptocurrency metrics
 - `/sentiments` - Get cryptocurrency sentiment
 - `/provision` - Hook for user subscription
 - `/deprovision` - Hook for subscription cancellation

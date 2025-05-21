@@ -103,18 +103,18 @@ app.get('/ratings', authenticateToken, async (req, res) => {
 });
 
 /**
- * Proxy endpoint for factors
+ * Proxy endpoint for metrics
  */
-app.get('/factors', authenticateToken, async (req, res) => {
+app.get('/metrics', authenticateToken, async (req, res) => {
   try {
-    const response = await axios.get(`${TM_API_BASE_URL}/factors`, {
+    const response = await axios.get(`${TM_API_BASE_URL}/metrics`, {
       headers: { Authorization: `Bearer ${req.token}` },
       params: req.query
     });
     
     return res.status(200).json(response.data);
   } catch (error) {
-    console.error('Factors proxy error:', error);
+    console.error('Metrics proxy error:', error);
     return res.status(error.response?.status || 500).json(error.response?.data || { error: 'Internal server error' });
   }
 });
