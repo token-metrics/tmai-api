@@ -1,7 +1,7 @@
 {
   "name": "token-metrics-api",
   "version": "1.0.0",
-  "description": "Token Metrics AI API for cryptocurrency ratings, factors, and sentiment analysis",
+  "description": "Token Metrics AI API for cryptocurrency ratings, metrics, and sentiment analysis",
   "publisher": "Token Metrics",
   "main": "index.js",
   "icon": "https://tokenmetrics.com/icon.png",
@@ -10,7 +10,7 @@
     "type": "oauth2",
     "authorizationUrl": "https://api.tokenmetrics.com/v2/oauth/authorize",
     "tokenUrl": "https://api.tokenmetrics.com/v2/oauth/token",
-    "scopes": ["ratings:read", "factors:read", "sentiment:read"]
+    "scopes": ["ratings:read", "metrics:read", "sentiment:read"]
   },
   "api": {
     "baseUrl": "https://api.tokenmetrics.com/v2",
@@ -42,9 +42,9 @@
         ]
       },
       {
-        "name": "getFactors",
-        "description": "Get cryptocurrency factors",
-        "path": "/factors",
+        "name": "getMetrics",
+        "description": "Get cryptocurrency metrics",
+        "path": "/metrics",
         "method": "GET",
         "parameters": [
           {
@@ -103,8 +103,8 @@
     },
     {
       "name": "Get Ethereum Factors",
-      "description": "Retrieve the factors for Ethereum over a date range",
-      "code": "const factors = await tokenMetricsApi.getFactors({ symbol: 'ETH', startDate: '2023-01-01', endDate: '2023-01-31' });\nconsole.log(factors);"
+      "description": "Retrieve the metrics for Ethereum over a date range",
+      "code": "const metrics = await tokenMetricsApi.getMetrics({ symbol: 'ETH', startDate: '2023-01-01', endDate: '2023-01-31' });\nconsole.log(metrics);"
     }
   ]
 }

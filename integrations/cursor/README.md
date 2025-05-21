@@ -1,11 +1,11 @@
 # Token Metrics Cursor IDE Connector
 
-This connector integrates the Token Metrics AI API with Cursor IDE, providing cryptocurrency ratings, factors, and sentiment analysis directly in your development environment.
+This connector integrates the Token Metrics AI API with Cursor IDE, providing cryptocurrency ratings, metrics, and sentiment analysis directly in your development environment.
 
 ## Features
 
 - Access Token Metrics cryptocurrency ratings
-- View cryptocurrency factors and sentiment analysis
+- View cryptocurrency metrics and sentiment analysis
 - OAuth authentication flow for secure API access
 - Sample code snippets for quick integration
 
@@ -23,13 +23,13 @@ This connector integrates the Token Metrics AI API with Cursor IDE, providing cr
 const ratings = await tokenMetricsApi.getRatings({ symbol: 'BTC' });
 console.log(ratings);
 
-// Example: Get Ethereum factors
-const factors = await tokenMetricsApi.getFactors({ 
+// Example: Get Ethereum metrics
+const metrics = await tokenMetricsApi.getMetrics({ 
   symbol: 'ETH', 
   startDate: '2023-01-01', 
   endDate: '2023-01-31' 
 });
-console.log(factors);
+console.log(metrics);
 ```
 
 ## Authentication
