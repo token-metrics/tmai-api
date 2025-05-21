@@ -65,9 +65,9 @@ class TokenMetricsOpenAI:
         response.raise_for_status()
         return response.json()
     
-    def get_factors(self, symbol, start_date=None, end_date=None):
+    def get_metrics(self, symbol, start_date=None, end_date=None):
         """
-        Get cryptocurrency factors
+        Get cryptocurrency metrics
         
         Args:
             symbol (str): Token symbol (e.g., "BTC")
@@ -84,7 +84,7 @@ class TokenMetricsOpenAI:
             params["endDate"] = end_date
         
         response = requests.get(
-            f"{self.BASE_URL}/factors",
+            f"{self.BASE_URL}/metrics",
             headers=self._get_headers(),
             params=params
         )

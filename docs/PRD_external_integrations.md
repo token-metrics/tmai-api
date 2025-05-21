@@ -18,12 +18,12 @@ We must embed the API in high-reach ecosystems that auto-promote new listings an
 • Median "time-to-first-rating" ≤ 10 minutes for any connector
 
 ## 3 NON-GOALS
-× Adding new factor or rating endpoints
+× Adding new metric or rating endpoints
 × Enterprise Snowflake or bespoke deals
 × Changes to the pricing-service internals
 
 ## 4 SYSTEM OVERVIEW (ALL CONNECTORS)
-Client ⇢ Bearer JWT ⇢ API Gateway ⇢ /ratings | /factors | /sentiment
+Client ⇢ Bearer JWT ⇢ API Gateway ⇢ /ratings | /metrics | /sentiment
 └─⇢ /pricing svc ⇢ veTMAI staking contract
 Required JWT claims: `plan`, `payment_method`, `stake_score`.
 The gateway enforces per-plan QPS and monthly caps and logs usage.
@@ -94,3 +94,29 @@ Rollback via `/deploy rollback <prev-sha>`; gateway drains 10 % traffic per minu
 :ballot_box_with_check: `npm audit` and `pip audit` show zero critical issues
 :ballot_box_with_check: External outbound calls only to <http://tokenmetrics.com|tokenmetrics.com> or approved RPC endpoints
 :ballot_box_with_check: Solidity compiled with `0.8.21`, optimizer runs ≥ 1000
+
+## 11 PRICING TIERS
+• **Free — Staking Score 0**
+  • 5 000 API calls per month, 1 req/min hard cap.
+  • Endpoints: Token and OHLCV price data (hourly, daily, 10-min price feed), "Top Tokens by Market-Cap," plus live Trader Grades / Trading Signals.
+  • Historical depth: three-month look-back for grades / signals / indices, but the most recent 30 days are pay-walled.
+  • No charge; overage not available.
+• **Advanced — Staking Scores 1-3**
+  • 20 000 calls per month, 60 req/min.
+  • Monthly fee USD 99.99 (10 % off when paid in TMAI).
+  • Unlocks all Free endpoints plus Grades & Signals, Indices, Indicators, Token Reports & Metrics.
+  • Historical depth: 12-month look-back on every unlocked category.
+  • Overage: USD 0.010 per 1 000 calls.
+• **Premium — Staking Scores 4-6**
+  • 100 000 calls per month, 180 req/min.
+  • Monthly fee USD 199.99 (10 % off in TMAI).
+  • Adds AI-Agent endpoints and AI Reports on top of Advanced.
+  • Historical depth: 36 months for every category.
+  • Overage: USD 0.0075 per 1 000 calls.
+• **VIP — Staking Scores 7-10**
+  • 500 000 calls per month, 600 req/min.
+  • Monthly fee USD 799.99 (10 % off in TMAI).
+  • Everything in Premium, with unlimited historical look-back.
+  • Overage: USD 0.0050 per 1 000 calls.
+
+Overage is billed in blocks of 1 000 calls. Annual pre-pay still gives two months free, and paying the annual invoice in TMAI stacks the 10 % pay-in discount on top.

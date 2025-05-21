@@ -60,7 +60,7 @@ class TokenMetricsOpenAI {
   }
   
   /**
-   * Get cryptocurrency factors
+   * Get cryptocurrency metrics
    * 
    * @param {Object} options - Query parameters
    * @param {string} options.symbol - Token symbol (e.g., "BTC")
@@ -68,12 +68,12 @@ class TokenMetricsOpenAI {
    * @param {string} options.endDate - End date in YYYY-MM-DD format
    * @returns {Promise<Object>} - Factors data
    */
-  async getFactors(options = {}) {
+  async getMetrics(options = {}) {
     if (!options.symbol) {
       throw new Error('Symbol parameter is required');
     }
     
-    const response = await axios.get(`${this.baseUrl}/factors`, {
+    const response = await axios.get(`${this.baseUrl}/metrics`, {
       headers: this._getHeaders(),
       params: options
     });

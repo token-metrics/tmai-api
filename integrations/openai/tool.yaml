@@ -1,12 +1,12 @@
 # OpenAI Agents Tool for Token Metrics API
 name: token_metrics_ratings
-description: Get cryptocurrency ratings, factors, and sentiment analysis from Token Metrics AI
+description: Get cryptocurrency ratings, metrics, and sentiment analysis from Token Metrics AI
 auth:
   type: oauth
   client_id: ${CLIENT_ID}
   authorization_url: https://api.tokenmetrics.com/v2/oauth/authorize
   token_url: https://api.tokenmetrics.com/v2/oauth/token
-  scope: ratings:read factors:read sentiment:read
+  scope: ratings:read metrics:read sentiment:read
   token_exchange_method: jwt
 api:
   base_url: https://api.tokenmetrics.com/v2
@@ -48,10 +48,10 @@ endpoints:
           "pages": 1
         }
       }
-  - name: get_factors
-    description: Get cryptocurrency factors from Token Metrics AI
+  - name: get_metrics
+    description: Get cryptocurrency metrics from Token Metrics AI
     method: GET
-    path: /factors
+    path: /metrics
     parameters:
       - name: symbol
         type: string
@@ -72,9 +72,9 @@ endpoints:
           {
             "symbol": "BTC",
             "date": "2023-10-01",
-            "factor_name": "Market Momentum",
-            "factor_value": 0.75,
-            "factor_weight": 0.2
+            "metric_name": "Market Momentum",
+            "metric_value": 0.75,
+            "metric_weight": 0.2
           }
         ],
         "meta": {

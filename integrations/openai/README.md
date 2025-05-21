@@ -1,13 +1,13 @@
 # Token Metrics OpenAI Agents Tool
 
-This integration provides a tool for OpenAI Agents to access the Token Metrics AI API for cryptocurrency ratings, factors, and sentiment analysis.
+This integration provides a tool for OpenAI Agents to access the Token Metrics AI API for cryptocurrency ratings, metrics, and sentiment analysis.
 
 ## Features
 
 - Tool definition in YAML format for OpenAI Agents
 - Helper libraries for Python and JavaScript
 - OAuth authentication with JWT token conversion
-- Access to ratings, factors, and sentiment endpoints
+- Access to ratings, metrics, and sentiment endpoints
 
 ## Components
 
@@ -36,9 +36,9 @@ client = TokenMetricsOpenAI(jwt_token="your_jwt_token")
 ratings = client.get_ratings(symbol="BTC")
 print(ratings)
 
-# Get cryptocurrency factors
-factors = client.get_factors(symbol="ETH", start_date="2023-01-01", end_date="2023-01-31")
-print(factors)
+# Get cryptocurrency metrics
+metrics = client.get_metrics(symbol="ETH", start_date="2023-01-01", end_date="2023-01-31")
+print(metrics)
 
 # Get cryptocurrency sentiment
 sentiment = client.get_sentiment(symbol="BTC")
@@ -69,9 +69,9 @@ client.getRatings({ symbol: 'BTC' })
   .then(ratings => console.log(ratings))
   .catch(error => console.error(error));
 
-// Get cryptocurrency factors
+// Get cryptocurrency metrics
 client.getFactors({ symbol: 'ETH', startDate: '2023-01-01', endDate: '2023-01-31' })
-  .then(factors => console.log(factors))
+  .then(metrics => console.log(metrics))
   .catch(error => console.error(error));
 
 // Get cryptocurrency sentiment
