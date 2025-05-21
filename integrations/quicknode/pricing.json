@@ -1,0 +1,97 @@
+{
+  "name": "Token Metrics AI API",
+  "description": "Access Token Metrics AI API for cryptocurrency ratings, factors, and sentiment analysis",
+  "icon": "https://tokenmetrics.com/icon.png",
+  "plans": [
+    {
+      "id": "qn_basic",
+      "name": "Basic",
+      "description": "Basic access to Token Metrics AI API",
+      "price": {
+        "amount": 49.99,
+        "currency": "USD",
+        "interval": "month"
+      },
+      "features": [
+        "Access to ratings endpoint",
+        "Limited to 1,000 API calls per month",
+        "10% discount when paying with TMAI token"
+      ],
+      "limits": {
+        "api_calls_per_month": 1000,
+        "qps": 1
+      }
+    },
+    {
+      "id": "qn_standard",
+      "name": "Standard",
+      "description": "Standard access to Token Metrics AI API",
+      "price": {
+        "amount": 99.99,
+        "currency": "USD",
+        "interval": "month"
+      },
+      "features": [
+        "Access to ratings and factors endpoints",
+        "Limited to 5,000 API calls per month",
+        "10% discount when paying with TMAI token"
+      ],
+      "limits": {
+        "api_calls_per_month": 5000,
+        "qps": 5
+      }
+    },
+    {
+      "id": "qn_professional",
+      "name": "Professional",
+      "description": "Professional access to Token Metrics AI API",
+      "price": {
+        "amount": 199.99,
+        "currency": "USD",
+        "interval": "month"
+      },
+      "features": [
+        "Access to all endpoints (ratings, factors, sentiment)",
+        "Limited to 20,000 API calls per month",
+        "10% discount when paying with TMAI token"
+      ],
+      "limits": {
+        "api_calls_per_month": 20000,
+        "qps": 10
+      }
+    },
+    {
+      "id": "qn_enterprise",
+      "name": "Enterprise",
+      "description": "Enterprise access to Token Metrics AI API",
+      "price": {
+        "amount": 499.99,
+        "currency": "USD",
+        "interval": "month"
+      },
+      "features": [
+        "Access to all endpoints (ratings, factors, sentiment)",
+        "Limited to 100,000 API calls per month",
+        "10% discount when paying with TMAI token",
+        "Priority support"
+      ],
+      "limits": {
+        "api_calls_per_month": 100000,
+        "qps": 20
+      }
+    }
+  ],
+  "payment_methods": [
+    {
+      "id": "credit_card",
+      "name": "Credit Card",
+      "description": "Pay with credit card"
+    },
+    {
+      "id": "tmai_token",
+      "name": "TMAI Token",
+      "description": "Pay with TMAI token for 10% discount",
+      "discount_percentage": 10
+    }
+  ]
+}
