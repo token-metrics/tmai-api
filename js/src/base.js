@@ -28,7 +28,7 @@ class BaseEndpoint {
     const url = `${this.baseUrl}/${endpoint}`;
     const headers = {
       'accept': 'application/json',
-      'api_key': this.client.apiKey
+      'x-api-key': this.client.apiKey
     };
 
     try {
@@ -131,6 +131,7 @@ class BaseEndpoint {
       'market-metrics': 1000,
       'trader-indices': 1000,
       'trading-signals': 1000,
+      'hourly-trading-signals': 50,
       'investor-indices': 1000,
       'crypto-investors': 1000,
       'top-market-cap-tokens': 1000,

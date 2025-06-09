@@ -18,6 +18,7 @@ class TokenMetricsClient {
     const TokensEndpoint = require('./endpoints/tokens');
     const AIAgentEndpoint = require('./endpoints/ai_agent');
     const TradingSignalsEndpoint = require('./endpoints/trading_signals');
+    const HourlyTradingSignalsEndpoint = require('./endpoints/hourly_trading_signals');
     const HourlyOHLCVEndpoint = require('./endpoints/hourly_ohlcv');
     const DailyOHLCVEndpoint = require('./endpoints/daily_ohlcv');
     const InvestorGradesEndpoint = require('./endpoints/investor_grades');
@@ -45,6 +46,7 @@ class TokenMetricsClient {
     this.tokens = new TokensEndpoint(this);
     this.aiAgent = new AIAgentEndpoint(this);
     this.tradingSignals = new TradingSignalsEndpoint(this);
+    this.hourlyTradingSignals = new HourlyTradingSignalsEndpoint(this);
     this.hourlyOhlcv = new HourlyOHLCVEndpoint(this);
     this.dailyOhlcv = new DailyOHLCVEndpoint(this);
     this.investorGrades = new InvestorGradesEndpoint(this);

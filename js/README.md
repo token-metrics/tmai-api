@@ -84,6 +84,7 @@ async function getTokenData() {
 | `aiAgent` | Interact with Token Metrics AI chatbot | `client.aiAgent.ask('What is your Bitcoin forecast?')` |
 | `aiReports` | AI-generated analysis reports | `client.aiReports.get({ symbol: 'BTC,ETH' })` |
 | `tradingSignals` | AI-generated trading signals | `client.tradingSignals.get({ symbol: 'BTC,ETH', startDate: '2023-10-01', endDate: '2023-10-10', signal: '1' })` |
+| `hourlyTradingSignals` | Hourly AI-generated trading signals | `client.hourlyTradingSignals.get({ token_id: '3375,3306' })` |
 | `investorIndices` | AI-generated investor indices | `client.investorIndices.get({ startDate: '2023-10-01', endDate: '2023-10-10' })` |
 | `cryptoInvestors` | Information about crypto investors | `client.cryptoInvestors.get()` |
 | `topMarketCapTokens` | Top tokens by market capitalization | `client.topMarketCapTokens.get({ top_k: 100 })` |
