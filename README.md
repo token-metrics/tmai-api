@@ -59,6 +59,15 @@ client.tokens.get({ symbol: 'BTC,ETH' })
   });
 ```
 
+## Integrations
+
+Token Metrics API is available through multiple platforms and integrations:
+
+- **[Official MCP Server](https://github.com/token-metrics/mcp#readme)** - Model Context Protocol server for AI assistants and agents
+- **[Rapid API](https://rapidapi.com/token-metrics-token-metrics-default/api/token-metrics-api1)** - Access our API through the RapidAPI marketplace
+- **[Postman](https://www.postman.com/tokenmetrics-dev/token-metrics-api/overview)** - Explore and test our API endpoints with our Postman collection
+- **[Zapier](https://zapier.com/apps/token-metrics/integrations)** - Connect Token Metrics with thousands of other apps through Zapier automations
+
 ## Documentation
 
 - [Token Metrics API Documentation](https://app.tokenmetrics.com/en/api)
