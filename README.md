@@ -67,6 +67,7 @@ Token Metrics API is available through multiple platforms and integrations:
 - **[Rapid API](https://rapidapi.com/token-metrics-token-metrics-default/api/token-metrics-api1)** - Access our API through the RapidAPI marketplace
 - **[Postman](https://www.postman.com/tokenmetrics-dev/token-metrics-api/overview)** - Explore and test our API endpoints with our Postman collection
 - **[Zapier](https://zapier.com/apps/token-metrics/integrations)** - Connect Token Metrics with thousands of other apps through Zapier automations
+- **[Quicknode](https://marketplace.quicknode.com/add-on/token-metrics-api)** - Access our API through the Quicknode marketplace
 
 ## Documentation
 
@@ -74,6 +75,15 @@ Token Metrics API is available through multiple platforms and integrations:
 - [Developer Guide](DEVELOPER_GUIDE.md) - Comprehensive guide for developers
 - [Python SDK Documentation](python/README.md)
 - [JavaScript SDK Documentation](js/README.md)
+
+## Tutorial Videos
+
+- [OpenAI Agents SDK](https://youtu.be/BuTbmBBtAD)
+- [Cursor IDE](https://youtu.be/BuTbmBBtADs)
+- [Cline](https://youtu.be/esvNToXWuf0)
+- [Claude](https://youtu.be/pVpZA3zqOME)
+- [LangChain](https://youtu.be/uKaSmSbL1HI)
+- [Quicknode](https://youtu.be/6wU8P2MUKtI)
 
 ## Target Audiences
 
