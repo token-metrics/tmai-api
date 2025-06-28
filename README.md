@@ -76,14 +76,14 @@ Token Metrics API is available through multiple platforms and integrations:
 - [Python SDK Documentation](python/README.md)
 - [JavaScript SDK Documentation](js/README.md)
 
-## Tutorial Videos
+## Integration Demo Videos
 
-- [OpenAI Agents SDK](https://youtu.be/BuTbmBBtAD)
-- [Cursor IDE](https://youtu.be/BuTbmBBtADs)
-- [Cline](https://youtu.be/esvNToXWuf0)
-- [Claude](https://youtu.be/pVpZA3zqOME)
-- [LangChain](https://youtu.be/uKaSmSbL1HI)
-- [Quicknode](https://youtu.be/6wU8P2MUKtI)
+- **[Token Metrics Crypto API Integration With OpenAI SDK](https://youtu.be/BuTbmBBtAD)** - Learn how to use the Token Metrics crypto API with OpenAI SDK to power AI-driven crypto apps, trading tools, and intelligent automation workflows.
+- **[Using Token Metrics Crypto API Inside Cursor IDE](https://youtu.be/BuTbmBBtADs)** - See how developers build faster using the Token Metrics crypto API in Cursor IDE. Streamline crypto data access inside your AI-powered coding workflow.
+- **[Token Metrics Crypto API Integration Tutorial For Cline](https://youtu.be/esvNToXWuf0)** - Discover how Cline integrates with the Token Metrics crypto API to power real-time crypto data pipelines, trading bots, and autonomous agents.
+- **[How Claude Integrates With Token Metrics Crypto API](https://youtu.be/pVpZA3zqOME)** - Watch how Claude AI connects with the Token Metrics crypto API to deliver smarter crypto insights, data access, and automated research tools.
+- **[Langchain And Token Metrics Crypto API Integration](https://youtu.be/uKaSmSbL1HI)** - Learn how to integrate Langchain with the Token Metrics crypto API to build intelligent crypto agents and trading tools using real-time data.
+- **[QuickNode Integration With Token Metrics Crypto API](https://youtu.be/6wU8P2MUKtI)** - See how to combine QuickNode with Token Metrics crypto API to supercharge blockchain apps, trading infrastructure, and data automation workflows.
 
 ## Target Audiences
 
