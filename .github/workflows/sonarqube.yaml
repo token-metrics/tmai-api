@@ -1,0 +1,117 @@
+name: Security Scan
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Run daily at 2AM UTC
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
+      # ----- Setup Python Virtual Environment -----
+      - name: Setup Python Environment
+        run: |
+          python3 -m venv security-env
+          source security-env/bin/activate
+          echo "VIRTUAL_ENV=$(pwd)/security-env" >> $GITHUB_ENV
+          echo "$(pwd)/security-env/bin" >> $GITHUB_PATH
+
+      # ----- Install security tooling -----
+      - name: Install Bandit, Semgrep, Trivy
+        run: |
+          source security-env/bin/activate
+          pip install --disable-pip-version-check \
+            bandit[sarif]==1.7.9 \
+            semgrep==1.71.0
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b ./bin
+          echo "$(pwd)/bin" >> $GITHUB_PATH
+
+      # ----- Python SAST (if any Python files exist) -----
+      - name: Bandit Security Scan
+        run: |
+          source security-env/bin/activate
+          if find python -name "*.py" 2>/dev/null | grep -q .; then
+            bandit -r python -ll -ii -f sarif -o bandit.sarif || true
+          else
+            echo '{"version":"2.1.0","runs":[]}' > bandit.sarif
+          fi
+        continue-on-error: true
+
+      # ----- Security rules (multi-language) -----
+      - name: Semgrep Security Scan
+        run: |
+          source security-env/bin/activate
+          semgrep ci --config p/ci --sarif --output semgrep.sarif || true
+
+      # ----- Dependency and config scans -----
+      - name: Trivy FileSystem Scan
+        run: |
+          trivy fs js python --exit-code 0 --severity HIGH,CRITICAL --format sarif --output trivy-fs.sarif --timeout 10m --scanners vuln || echo '{"version":"2.1.0","runs":[]}' > trivy-fs.sarif
+        continue-on-error: true
+        timeout-minutes: 12
+
+      - name: Trivy Config Scan
+        run: |
+          trivy config js python --exit-code 0 --severity HIGH,CRITICAL --format sarif --output trivy-config.sarif --timeout 5m || echo '{"version":"2.1.0","runs":[]}' > trivy-config.sarif
+        continue-on-error: true
+        timeout-minutes: 6
+
+      # ----- SonarQube Analysis -----
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_APP }}
+          SONAR_HOST_URL: http://sonarqube.tokenmetrics.com
+        with:
+          args: |
+            -Dsonar.sarifReportPaths=bandit.sarif,semgrep.sarif,trivy-fs.sarif,trivy-config.sarif
+            -Dsonar.projectKey=tmai-api
+            -Dsonar.projectName=tmai-api
+            -Dsonar.projectVersion=${{ github.sha }}
+            -Dsonar.sources=js/src,python/tmai_api,examples/hackathon-projects
+            -Dsonar.javascript.lcov.reportPaths=js/coverage/lcov.info
+            -Dsonar.javascript.node.maxspace=4096
+            -Dsonar.python.coverage.reportPaths=python/coverage.xml
+            -Dsonar.exclusions=js/node_modules/**,python/__pycache__/**,python/**/*.pyc,python/**/*.pyo,python/*.egg-info/**,python/setup.py,python/setup.cfg,python/MANIFEST.in,python/examples/universe.pkl,js/package-lock.json,security-env/**
+            -Dsonar.test.inclusions=js/test/test.js,python/tests/test_client.py
+            -Dsonar.test.exclusions=python/__pycache__/**,security-env/**
+            -Dsonar.coverage.exclusions=js/test/**,python/tests/**,python/examples/**,js/examples/**,examples/**,python/__pycache__/**,security-env/**
+            -Dsonar.cpd.exclusions=python/__pycache__/**,security-env/**
+            -Dsonar.qualitygate.wait=true
+
+      # ----- Quality Gate Check -----
+      - name: SonarQube Quality Gate
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        id: sonarqube-quality-gate
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_APP }}
+          SONAR_HOST_URL: http://sonarqube.tokenmetrics.com
+
+      # ----- Security Report Summary -----
+      - name: Security Report Summary
+        run: |
+          echo "## Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "### Tools Used:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Bandit (Python)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Semgrep (Multi-language)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Trivy (Dependencies & Config)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ SonarQube (Comprehensive Analysis)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Results:" >> $GITHUB_STEP_SUMMARY
+          echo "- SonarQube Quality Gate: ${{ steps.sonarqube-quality-gate.outputs.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Security vulnerabilities will be reported in SonarQube dashboard" >> $GITHUB_STEP_SUMMARY
+          echo "- View detailed results at: http://sonarqube.tokenmetrics.com/dashboard?id=tmai-api" >> $GITHUB_STEP_SUMMARY
+
+      # ----- Cleanup Virtual Environment -----
+      - name: Cleanup
+        if: always()
+        run: |
+          rm -rf security-env
