@@ -1,7 +1,16 @@
-import requests
-import pandas as pd
 import datetime
-from tqdm import tqdm
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+
+import requests
+
+from .exceptions import APIRequestError
+
+# Optional pandas support. Import lazily so the core SDK can be used without the
+# heavy dependency unless dataframe conversion is explicitly requested.
+try:  # pragma: no cover - exercised indirectly when pandas is installed
+    import pandas as pd  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover - import side effect only
+    pd = None
 
 class BaseEndpoint:
     """Base class for all API endpoints"""
@@ -13,7 +22,7 @@ class BaseEndpoint:
             client: TokenMetricsClient instance
         """
         self.client = client
-        self.base_url = client.BASE_URL
+        self.base_url = client.base_url
     
     def _request(self, method, endpoint, params=None, json=None):
         """Make a request to the API.
@@ -27,23 +36,34 @@ class BaseEndpoint:
         Returns:
             dict: API response data
         """
-        url = f"{self.base_url}/{endpoint}"
-        headers = {
-            "accept": "application/json",
-            "api_key": self.client.api_key
-        }
-        
-        if method.lower() == "get":
-            response = requests.get(url, headers=headers, params=params)
-        elif method.lower() == "post":
-            headers["content-type"] = "application/json"
-            response = requests.post(url, headers=headers, json=json)
-        else:
+        url = f"{self.base_url}/{endpoint}".rstrip("/")
+        method = method.upper()
+
+        if method not in {"GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"}:
             raise ValueError(f"Unsupported HTTP method: {method}")
-        
-        # Raise an exception if the request failed
-        response.raise_for_status()
-        
+
+        headers = self.client.build_headers()
+        if method in {"POST", "PUT", "PATCH"}:
+            headers.setdefault("content-type", "application/json")
+
+        try:
+            response = self.client.session.request(
+                method=method,
+                url=url,
+                headers=headers,
+                params=params,
+                json=json,
+                timeout=self.client.timeout,
+            )
+            response.raise_for_status()
+        except requests.RequestException as exc:  # pragma: no cover - requests raises detailed exceptions
+            raise APIRequestError(
+                endpoint=endpoint,
+                method=method,
+                params=params,
+                status_code=getattr(exc.response, "status_code", None),
+            ) from exc
+
         return response.json()
     
     def _chunk_date_range(self, startDate, endDate, max_days=29):
@@ -90,7 +110,14 @@ class BaseEndpoint:
             
         return result
     
-    def _paginated_request(self, method, endpoint, params=None, max_days=29, custom_limit=None):
+    def _paginated_request(
+        self,
+        method: str,
+        endpoint: str,
+        params: Optional[Dict[str, Any]] = None,
+        max_days: int = 29,
+        custom_limit: Optional[int] = None,
+    ) -> Union[Dict[str, Any], List[Any]]:
         """Make paginated requests to handle date ranges and custom pagination logic.
         
         This method handles two forms of pagination:
@@ -119,8 +146,7 @@ class BaseEndpoint:
             # Default for any other endpoint
             'default': 1000
         }
-        if params is None:
-            params = {}
+        params = dict(params or {})
             
         # Extract date parameters
         startDate = params.get('startDate')
@@ -136,90 +162,161 @@ class BaseEndpoint:
         # Override user-provided limit with our internal limit
         params['limit'] = limit
         
-        # We'll remove page parameter since we're handling pagination ourselves
         if 'page' in params:
             del params['page']
-            
-        # If no date range or already within limits, we still need to handle pagination
+
         if not startDate or not endDate:
-            date_chunks = [(startDate, endDate)]
+            date_chunks: Iterable[Tuple[Optional[str], Optional[str]]] = [(startDate, endDate)]
         else:
-            # Split date range into chunks
             date_chunks = self._chunk_date_range(startDate, endDate, max_days)
-        
-        # Initialize combined results
-        all_data = []
-        combined_meta = {}
-        
-        # Calculate total iterations for progress bar
-        total_iterations = len(date_chunks)
-        
-        # Setup progress bar
-        with tqdm(total=total_iterations, desc=f"Fetching {endpoint} data", unit="chunk") as pbar:
-            # Process each date chunk
-            for chunk_start, chunk_end in date_chunks:
-                # Update date parameters
-                chunk_params = params.copy()
-                if chunk_start:
-                    chunk_params['startDate'] = chunk_start
-                if chunk_end:
-                    chunk_params['endDate'] = chunk_end
-                
-                # Set a high limit to get as much data as possible in one request
-                chunk_params['limit'] = limit
-                
-                # Always start with page 0 for each chunk
-                chunk_params['page'] = 0
-                
-                # Try to get data for this date chunk, but handle errors gracefully
+
+        all_data: List[Any] = []
+        combined_meta: Dict[str, Any] = {}
+        errors: List[Dict[str, Any]] = []
+
+        progress_callback: Optional[Callable[[Dict[str, Any]], None]] = getattr(
+            self.client, "progress_callback", None
+        )
+
+        for chunk_start, chunk_end in date_chunks:
+            chunk_params = params.copy()
+            if chunk_start:
+                chunk_params['startDate'] = chunk_start
+            if chunk_end:
+                chunk_params['endDate'] = chunk_end
+            chunk_params['limit'] = limit
+
+            next_page: Optional[int] = params.get('page', 0) or 0
+
+            while True:
+                chunk_params['page'] = next_page
+
                 try:
                     response = self._request(method, endpoint, chunk_params)
-                    
-                    # Extract and store the data
-                    if isinstance(response, dict):
-                        if "data" in response:
-                            data_items = response["data"]
-                            if isinstance(data_items, list):
-                                all_data.extend(data_items)
-                            else:
-                                all_data.append(data_items)
-                        
-                        # Store metadata for later if it exists
-                        for key, value in response.items():
-                            if key != "data":
-                                combined_meta[key] = value
-                    else:
-                        # If the response is not a dict with a data field, append it directly
-                        if isinstance(response, list):
-                            all_data.extend(response)
-                        else:
-                            all_data.append(response)
-                except Exception as e:
-                    # Silently skip this chunk and continue with the next one
-                    # No need to print warnings as they would clutter the user's output
-                    pass
-                
-                # Update progress bar
-                pbar.update(1)
-        
-        # Check if we got any data at all
-        if not all_data:
-            # Silently return an empty dataset with consistent structure
-            # No need to print warnings as they would clutter the user's output
-            return {"data": []}
-            
-        # Construct the final response
+                except APIRequestError as exc:
+                    if self.client.allow_partial_results:
+                        errors.append({
+                            "chunk": {
+                                "startDate": chunk_start,
+                                "endDate": chunk_end,
+                                "page": next_page,
+                            },
+                            "error": str(exc),
+                        })
+                        break
+                    raise
+
+                data_items, metadata = self._extract_data(response)
+
+                if data_items:
+                    all_data.extend(data_items)
+
+                combined_meta.update(metadata)
+
+                if progress_callback:
+                    progress_callback({
+                        "endpoint": endpoint,
+                        "chunk": {
+                            "startDate": chunk_start,
+                            "endDate": chunk_end,
+                        },
+                        "page": next_page,
+                        "items_fetched": len(data_items),
+                    })
+
+                next_page = self._calculate_next_page(
+                    metadata=metadata,
+                    previous_page=next_page,
+                    received=len(data_items),
+                    page_size=limit,
+                )
+
+                if next_page is None:
+                    break
+
+        result: Union[List[Any], Dict[str, Any]]
         if combined_meta:
-            result = combined_meta.copy()
-            result["data"] = all_data
-            return result
+            result = dict(combined_meta)
+            result['data'] = all_data
         elif all_data and isinstance(all_data[0], dict):
-            # If we have data items and they're dictionaries, return in standard format
-            return {"data": all_data}
+            result = {"data": all_data}
         else:
-            # Otherwise, return just the data array
-            return all_data
-    
+            result = all_data
+
+        if errors:
+            if isinstance(result, dict):
+                result = dict(result)
+                result['errors'] = errors
+                return result
+            return {"data": result, "errors": errors}
+
+        if isinstance(result, list):
+            return result
+
+        return result
+
+    def _extract_data(self, response: Any) -> Tuple[List[Any], Dict[str, Any]]:
+        """Normalize API responses into data payload and metadata."""
+        if isinstance(response, dict):
+            metadata = {key: value for key, value in response.items() if key != "data"}
+            data_payload = response.get("data")
+            if isinstance(data_payload, list):
+                return data_payload, metadata
+            if data_payload is None:
+                return [], metadata
+            return [data_payload], metadata
+
+        if isinstance(response, list):
+            return response, {}
+
+        return [response], {}
+
+    def _calculate_next_page(
+        self,
+        metadata: Dict[str, Any],
+        previous_page: Optional[Any],
+        received: int,
+        page_size: int,
+    ) -> Optional[Any]:
+        """Determine the next page identifier based on metadata and payload size."""
+
+        try:
+            previous_numeric = int(previous_page) if previous_page is not None else None
+        except (TypeError, ValueError):
+            previous_numeric = None
+
+        for key in ("next_page", "nextPage", "next_page_token", "nextPageToken"):
+            if key in metadata and metadata[key] not in (None, ""):
+                try:
+                    return int(metadata[key])
+                except (TypeError, ValueError):
+                    return metadata[key]
+
+        total_pages = metadata.get("total_pages") or metadata.get("totalPages")
+        current_page = metadata.get("page") or metadata.get("current_page") or metadata.get("currentPage")
+        if total_pages is not None and current_page is not None:
+            try:
+                if int(current_page) + 1 < int(total_pages):
+                    return int(current_page) + 1
+                return None
+            except (TypeError, ValueError):
+                return None
+
+        has_more = metadata.get("has_more") or metadata.get("hasMore")
+        if has_more is False:
+            return None
+        if has_more is True:
+            base = previous_numeric if previous_numeric is not None else 0
+            return base + 1
+
+        if received < page_size or page_size == 0:
+            return None
+
+        if previous_numeric is None:
+            return None
+
+        return previous_numeric + 1
+
     def to_dataframe(self, data):
         """Convert API response data to a pandas DataFrame.
         
@@ -231,6 +328,13 @@ class BaseEndpoint:
         """
         # Implementation depends on the specific structure of each endpoint's response
         # This is a placeholder to be overridden by subclasses
+        if pd is None:
+            raise ImportError(
+                "pandas is required for DataFrame conversion. Install the optional "
+                "dependency with `pip install tmai-api[dataframe]` or add pandas "
+                "to your project."
+            )
+
         if isinstance(data, list):
             if not data:  # Handle empty list
                 return pd.DataFrame()

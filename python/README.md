@@ -21,6 +21,12 @@ The official Python SDK for Token Metrics AI API - providing professional invest
 
 ```bash
 pip install tmai-api
+
+# Include optional DataFrame helpers
+pip install "tmai-api[dataframe]"
+
+# Install analysis extras (plots, backtesting)
+pip install "tmai-api[analysis]"
 ```
 
 ## Quick Start
@@ -28,7 +34,7 @@ pip install tmai-api
 ```python
 from tmai_api import TokenMetricsClient
 
-# Initialize the client with your API key
+# Initialize the client with your API key or environment variable
 client = TokenMetricsClient(api_key="your-api-key")
 
 # Get information for top cryptocurrencies
@@ -142,9 +148,13 @@ plt.show()
 
 All API requests require an API key. You can get your API key by signing up at [Token Metrics](https://tokenmetrics.com).
 
+```bash
+export TMAI_API_KEY="your-api-key"
+```
+
 ```python
-# Initialize with your API key
-client = TokenMetricsClient(api_key="your-api-key")
+# The client will automatically read the key from the TMAI_API_KEY environment variable
+client = TokenMetricsClient()
 ```
 
 ## Error Handling
@@ -152,18 +162,20 @@ client = TokenMetricsClient(api_key="your-api-key")
 The SDK provides built-in error handling for API requests:
 
 ```python
+from tmai_api.exceptions import APIRequestError
+
 try:
     data = client.tokens.get(symbol="INVALID_SYMBOL")
-except Exception as e:
-    print(f"Error: {e}")
-    # Handle the error appropriately
+except APIRequestError as exc:
+    print(f"Request failed: {exc}")
+    # Handle the error appropriately or retry
 ```
 
 ## Requirements
 
-- Python 3.6+
-- `requests` package
-- `pandas` package
+- Python 3.8+
+- `requests`
+- Optional: `pandas` (for DataFrame helpers), `matplotlib` / `vectorbt` for analysis extras
 
 ## Documentation
 
@@ -174,6 +186,13 @@ For complete API documentation, visit:
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Development Setup
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
 
 ## License
 

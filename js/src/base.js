@@ -1,4 +1,4 @@
-const axios = require('axios');
+const { ApiRequestError } = require('./errors');
 
 /**
  * Base class for all API endpoints
@@ -11,7 +11,7 @@ class BaseEndpoint {
    */
   constructor(client) {
     this.client = client;
-    this.baseUrl = client.constructor.BASE_URL;
+    this.baseUrl = client.baseUrl;
   }
 
   /**
@@ -25,33 +25,34 @@ class BaseEndpoint {
    * @private
    */
   async _request(method, endpoint, params = null, json = null) {
-    const url = `${this.baseUrl}/${endpoint}`;
-    const headers = {
-      'accept': 'application/json',
-      'api_key': this.client.apiKey
-    };
+    const normalizedMethod = method.toUpperCase();
+    if (!['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'].includes(normalizedMethod)) {
+      throw new Error(`Unsupported HTTP method: ${method}`);
+    }
+
+    const headers = this.client.buildHeaders();
+    if (['POST', 'PUT', 'PATCH'].includes(normalizedMethod)) {
+      headers['content-type'] = 'application/json';
+    }
 
     try {
-      let response;
-
-      if (method.toLowerCase() === 'get') {
-        response = await axios.get(url, { headers, params });
-      } else if (method.toLowerCase() === 'post') {
-        headers['content-type'] = 'application/json';
-        response = await axios.post(url, json, { headers });
-      } else {
-        throw new Error(`Unsupported HTTP method: ${method}`);
-      }
-
+      const response = await this.client.http.request({
+        method: normalizedMethod,
+        url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
+        headers,
+        params: params || undefined,
+        data: json || undefined
+      });
       return response.data;
     } catch (error) {
-      if (error.response) {
-        throw new Error(`API Error: ${error.response.status} - ${error.response.data.message || error.response.statusText}`);
-      } else if (error.request) {
-        throw new Error('No response received from API');
-      } else {
-        throw error;
-      }
+      const status = error.response ? error.response.status : undefined;
+      throw new ApiRequestError({
+        endpoint,
+        method: normalizedMethod,
+        params,
+        status,
+        originalError: error
+      });
     }
   }
 
@@ -149,16 +150,19 @@ class BaseEndpoint {
       'default': 1000
     };
 
-    const startDate = params.startDate;
-    const endDate = params.endDate;
+    const workingParams = { ...(params || {}) };
 
-    const limit = customLimit !== null ? customLimit : 
+    const startDate = workingParams.startDate;
+    const endDate = workingParams.endDate;
+
+    const limit = customLimit !== null ? customLimit :
       (endpointLimits[endpoint] || endpointLimits.default);
 
-    params.limit = limit;
+    workingParams.limit = limit;
 
-    if (params.page !== undefined) {
-      delete params.page;
+    const pageSeed = workingParams.page ?? 0;
+    if (workingParams.page !== undefined) {
+      delete workingParams.page;
     }
 
     const dateChunks = !startDate || !endDate ? 
@@ -167,11 +171,10 @@ class BaseEndpoint {
 
     const allData = [];
     const combinedMeta = {};
-
-    console.log(`Fetching ${endpoint} data...`);
+    const errors = [];
 
     for (const [chunkStart, chunkEnd] of dateChunks) {
-      const chunkParams = { ...params };
+      const chunkParams = { ...workingParams };
       if (chunkStart) {
         chunkParams.startDate = chunkStart;
       }
@@ -181,51 +184,138 @@ class BaseEndpoint {
 
       chunkParams.limit = limit;
 
-      chunkParams.page = 0;
+      let nextPage = pageSeed;
 
-      try {
-        const response = await this._request(method, endpoint, chunkParams, null);
+      while (true) {
+        chunkParams.page = nextPage;
 
-        if (response && typeof response === 'object') {
-          if (response.data) {
-            if (Array.isArray(response.data)) {
-              allData.push(...response.data);
-            } else {
-              allData.push(response.data);
-            }
+        try {
+          const response = await this._request(method, endpoint, chunkParams, null);
+          const { dataItems, metadata } = this._extractData(response);
+
+          if (dataItems.length) {
+            allData.push(...dataItems);
           }
 
-          Object.entries(response).forEach(([key, value]) => {
-            if (key !== 'data') {
-              combinedMeta[key] = value;
-            }
-          });
-        } else if (Array.isArray(response)) {
-          allData.push(...response);
-        } else if (response) {
-          allData.push(response);
-        }
-      } catch (error) {
-        console.error(`Error fetching chunk ${chunkStart} to ${chunkEnd}: ${error.message}`);
-      }
+          Object.assign(combinedMeta, metadata);
 
-      console.log(`Processed chunk: ${chunkStart || 'start'} to ${chunkEnd || 'end'}`);
+          if (typeof this.client.progressCallback === 'function') {
+            this.client.progressCallback({
+              endpoint,
+              chunk: { startDate: chunkStart, endDate: chunkEnd },
+              page: nextPage,
+              itemsFetched: dataItems.length
+            });
+          }
+
+          nextPage = this._calculateNextPage(metadata, nextPage, dataItems.length, limit);
+          if (nextPage === null || nextPage === undefined) {
+            break;
+          }
+        } catch (error) {
+          if (this.client.allowPartialResults) {
+            errors.push({
+              chunk: { startDate: chunkStart, endDate: chunkEnd, page: nextPage },
+              error: error.message
+            });
+            break;
+          }
+
+          throw error;
+        }
+      }
     }
 
     if (allData.length === 0) {
       return { data: [] };
     }
 
+    let result;
     if (Object.keys(combinedMeta).length > 0) {
-      return {
+      result = {
         ...combinedMeta,
         data: allData
       };
     } else if (allData.length > 0 && typeof allData[0] === 'object') {
-      return { data: allData };
+      result = { data: allData };
     } else {
-      return allData;
+      result = allData;
     }
+
+    if (errors.length) {
+      if (result && typeof result === 'object' && !Array.isArray(result)) {
+        return { ...result, errors };
+      }
+
+      return { data: result, errors };
+    }
+
+    return result;
+  }
+
+  _extractData(response) {
+    if (response && typeof response === 'object' && !Array.isArray(response)) {
+      const { data, ...metadata } = response;
+      if (Array.isArray(data)) {
+        return { dataItems: data, metadata };
+      }
+      if (data === null || data === undefined) {
+        return { dataItems: [], metadata };
+      }
+      return { dataItems: [data], metadata };
+    }
+
+    if (Array.isArray(response)) {
+      return { dataItems: response, metadata: {} };
+    }
+
+    if (response === null || response === undefined) {
+      return { dataItems: [], metadata: {} };
+    }
+
+    return { dataItems: [response], metadata: {} };
+  }
+
+  _calculateNextPage(metadata, previousPage, received, pageSize) {
+    const directKeys = ['next_page', 'nextPage', 'next_page_token', 'nextPageToken'];
+    for (const key of directKeys) {
+      if (metadata[key]) {
+        return metadata[key];
+      }
+    }
+
+    const totalPages = metadata.total_pages ?? metadata.totalPages;
+    const currentPage = metadata.page ?? metadata.current_page ?? metadata.currentPage;
+
+    if (totalPages !== undefined && currentPage !== undefined) {
+      const total = Number(totalPages);
+      const current = Number(currentPage);
+      if (!Number.isNaN(total) && !Number.isNaN(current) && current + 1 < total) {
+        return current + 1;
+      }
+      return null;
+    }
+
+    const hasMore = metadata.has_more ?? metadata.hasMore;
+    if (hasMore === false) {
+      return null;
+    }
+    if (hasMore === true) {
+      const previousNumeric = Number(previousPage);
+      const base = Number.isNaN(previousNumeric) ? 0 : previousNumeric;
+      return base + 1;
+    }
+
+    if (received < pageSize || pageSize === 0) {
+      return null;
+    }
+
+    const previousNumeric = Number(previousPage);
+    if (Number.isNaN(previousNumeric)) {
+      return null;
+    }
+
+    return previousNumeric + 1;
   }
 }
 
