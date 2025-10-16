@@ -1,0 +1,2 @@
+# Development dependencies for the Token Metrics AI API Python SDK
+-e .[dev]

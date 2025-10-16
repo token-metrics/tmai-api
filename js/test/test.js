@@ -14,7 +14,7 @@
 const { TokenMetricsClient } = require('../src/index');
 const assert = require('assert');
 
-const apiKey = "tm-a123f8d9-2cde-4e50-af3b-c5e2b7ffcc81";
+const apiKey = process.argv[2] || process.env.TMAI_API_KEY || process.env.TM_API_KEY;
 
 if (!apiKey) {
   console.error('Please provide your Token Metrics API key as a command line argument or set the TM_API_KEY environment variable');
